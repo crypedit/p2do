@@ -1,5 +1,5 @@
-var P2NS = artifacts.require("./P2NS.sol");
+var P2DO = artifacts.require("./P2DO.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(P2NS);
+  deployer.deploy(P2DO);
 };

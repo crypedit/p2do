@@ -1,10 +1,10 @@
 import contract from "truffle-contract";
-import P2NSJSON from "./contracts/P2NS.json";
+import P2DOJSON from "./contracts/P2DO.json";
 
-class P2NS {
+class P2DO {
   constructor(web3) {
     this.web3 = web3
-    this.contract = contract(P2NSJSON);
+    this.contract = contract(P2DOJSON);
     this.contract.setProvider(web3.currentProvider);
   }
 
@@ -12,7 +12,7 @@ class P2NS {
     return (await this.web3.eth.getAccounts())[0]
   }
 
-  async p2nsContract() {
+  async p2doContract() {
     let currentNetwork = this.web3.currentProvider.publicConfigStore._state.networkVersion
     let exist
     if(currentNetwork === "1") { // mainnet
@@ -27,24 +27,34 @@ class P2NS {
     return exist
   }
 
-  putName = async (value) => {
-    let exist = await this.p2nsContract()
+  newPost = async (title, content) => {
+    let exist = await this.p2doContract()
     let owner = await this.myAddress()
-
-    return await exist.PutName(value, {from: owner})
+    return await exist.NewPost(JSON.stringify({title: title, content: content}), {from: owner})
   }
 
-  addressOf = async (value) => {
-    let exist = await this.p2nsContract()
+  getPost = async (i) => {
+    let exist = await this.p2doContract()
     let owner = await this.myAddress()
-    return await exist.AddressOf(value, {from: owner})
+    let content = await exist.GetPostContent(i,{from: owner})
+    let author = await exist.GetPostAuthor(i,{from: owner})
+    console.log(content)
+    var post = null
+    try {
+      post = JSON.parse(content)
+      post.author = author
+      return post
+    } catch(err){
+    }
+    return post
   }
 
-  nameOf = async (value) => {
-    let exist = await this.p2nsContract()
+  getPostNum = async () => {
+    let exist = await this.p2doContract()
     let owner = await this.myAddress()
-    return await exist.NameOf(value, {from: owner})
+    let num = await exist.GetPostNum({from: owner})
+    return num
   }
 }
 
-export default P2NS
+export default P2DO
