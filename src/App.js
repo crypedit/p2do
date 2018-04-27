@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Web3 from "web3";
 import './App.css';
 import P2DO from './p2do'
+import P2NS from './p2ns'
 import Card, { CardHeader, CardContent } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
@@ -20,12 +21,17 @@ class App extends Component {
       return;
     }
     this.p2do = new P2DO(web3);
+    this.p2ns = new P2NS(web3);
     let postNum = await this.p2do.getPostNum();
     console.log("postNum: "+postNum)
     let posts = this.state.posts;
     for (var i = 0; i < postNum; i++) {
       let post = await this.p2do.getPost(postNum - 1 - i);
       if(post){
+          let author = await this.p2ns.nameOf(post.author);
+          if(author){
+            post.author = author;
+          }
           posts[i] = post;
           this.setState({posts: posts})
       }
