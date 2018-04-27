@@ -33,20 +33,18 @@ class P2DO {
     return await exist.NewPost(JSON.stringify({title: title, content: content}), {from: owner})
   }
 
-  getPost = async (i) => {
+  getPostContent = async (i) => {
     let exist = await this.p2doContract()
     let owner = await this.myAddress()
     let content = await exist.GetPostContent(i,{from: owner})
+    return content
+  }
+
+  getPostAuthor = async (i) => {
+    let exist = await this.p2doContract()
+    let owner = await this.myAddress()
     let author = await exist.GetPostAuthor(i,{from: owner})
-    console.log(content)
-    var post = null
-    try {
-      post = JSON.parse(content)
-      post.author = author
-      return post
-    } catch(err){
-    }
-    return post
+    return author
   }
 
   getPostNum = async () => {

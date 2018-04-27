@@ -25,17 +25,42 @@ class App extends Component {
     let postNum = await this.p2do.getPostNum();
     console.log("postNum: "+postNum)
     let posts = this.state.posts;
-    for (var i = 0; i < postNum; i++) {
-      let post = await this.p2do.getPost(postNum - 1 - i);
-      if(post){
-          let author = await this.p2ns.nameOf(post.author);
-          if(author){
-            post.author = author;
-          }
-          posts[i] = post;
-          this.setState({posts: posts})
-      }
+    for (let i = 0; i < postNum; i++) {
+      let post = {author:"Loading...",title:"Loading...",content:"Loading..."}
+      posts[i] = post;
+      this.setState({posts: posts})
     }
+    for (let i = 0; i < postNum; i++) {
+      this.fetchPostContent(postNum, i)
+      this.fetchPostAuthor(postNum, i)
+    }
+  }
+
+  async fetchPostAuthor(postNum, i) {
+    let posts = this.state.posts;
+    let author = await this.p2do.getPostAuthor(postNum - 1 - i);
+    posts[i].author = author;
+    this.setState({posts: posts})
+
+    author = await this.p2ns.nameOf(author);
+    posts[i].author = author;
+    this.setState({posts: posts})
+  }
+
+  async fetchPostContent(postNum, i){
+    let posts = this.state.posts;
+    let content = await this.p2do.getPostContent(postNum - 1 - i);
+    console.log(content)
+    try {
+        let post = JSON.parse(content)
+        posts[i].title = post.title;
+        posts[i].content = post.content;
+    } catch(err){
+        posts[i].title = "Parse Error";
+        posts[i].content = "Parse Error";
+        console.log(err);
+    }
+    this.setState({posts: posts})
   }
 
   render() {
