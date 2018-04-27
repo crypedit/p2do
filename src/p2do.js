@@ -20,7 +20,7 @@ class P2DO {
     } else if (currentNetwork === "3") {  // ropsten
       exist = await this.contract.at('0x0')
     } else if (currentNetwork === "4") { // rinkeby
-      exist = await this.contract.at('0xe9880eedd4d44ec0b25f3a362af5b8dfd2754c62')
+      exist = await this.contract.at('0xf73b6253d84c940875d20cea6f2f3baad14bc6f1')
     } else {
       exist = await this.contract.deployed()
     }
