@@ -1,4 +1,4 @@
-# ThoughtWorks P2 Name Service 
+# ThoughtWorks P2 Decentrialized ToDo List
 
 ## Prerequisite
 
