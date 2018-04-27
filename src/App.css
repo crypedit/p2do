@@ -9,6 +9,11 @@
   width: 500px;
 }
 
+.Post > .Content {
+  text-align: left;
+  white-space: pre-wrap;
+}
+
 .container {
   display: flex;
   justify-content: center;

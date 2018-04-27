@@ -24,7 +24,7 @@ class App extends Component {
     console.log("postNum: "+postNum)
     let posts = this.state.posts;
     for (var i = 0; i < postNum; i++) {
-      let post = await this.p2do.getPost(i);
+      let post = await this.p2do.getPost(postNum - 1 - i);
       if(post){
           posts[i] = post;
           this.setState({posts: posts})
@@ -39,8 +39,8 @@ class App extends Component {
         postCards.push(
           <div className="Row" key={i}>
             <Card className="Post">
-              <CardHeader title={posts[i].title}/>
-              <CardContent>{posts[i].content}</CardContent>
+              <CardHeader title={posts[i].title} subheader={"Author: "+posts[i].author}/>
+              <CardContent className="Content">{posts[i].content}</CardContent>
             </Card>
           </div>
         );
