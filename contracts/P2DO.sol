@@ -14,6 +14,8 @@ contract P2DO {
         address author;
         string content;
     }
+
+    event NewPost(address indexed _author, string _content, uint256 _postNum);
     /*
     NOTE:
     The following variables are OPTIONAL vanities. One does not have to include them.
@@ -21,23 +23,22 @@ contract P2DO {
     Some wallets/interfaces might not even bother to look at this information.
     */
 
-    string public version = 'H0.1';       //human 0.1 standard. Just an arbitrary versioning scheme.
+    string public version = "H0.1";       //human 0.1 standard. Just an arbitrary versioning scheme.
 
-    function NewPost(string _content) public returns (uint256 _postNum){
+    function newPost(string _content) public {
         posts[postNum] = Post(msg.sender, _content);
-        postNum++;
-        return _postNum;
+        emit NewPost(msg.sender, _content, postNum++);
     }
 
-    function GetPostAuthor(uint256 _postIndex) public view returns (address _postAuthor){
+    function getPostAuthor(uint256 _postIndex) public view returns (address _postAuthor){
         return posts[_postIndex].author;
     }
 
-    function GetPostContent(uint256 _postIndex) public view returns (string _postContent){
+    function getPostContent(uint256 _postIndex) public view returns (string _postContent){
         return posts[_postIndex].content;
     }
 
-    function GetPostNum() public view returns (uint256 _postNum){
+    function getPostNum() public view returns (uint256 _postNum){
         return postNum;
     }
 }
