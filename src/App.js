@@ -39,6 +39,7 @@ class App extends Component {
   async fetchPostAuthor(postNum, i) {
     let posts = this.state.posts;
     let author = await this.p2do.getPostAuthor(postNum - 1 - i);
+    posts[i].authorRaw = author;
     posts[i].author = author;
     this.setState({posts: posts})
 
