@@ -68,44 +68,39 @@ class App extends Component {
   }
 
   render() {
-    var postCards = [];
     let posts = this.state.posts;
-    let i;
-    for (i = 0; i < posts.length; i++) {
-        postCards.push(
+    let that = this;
+    let postCards =
+      posts.map(function(post, i) {
+          return (
           <div className="Post" key={i}>
             <Card className="PostCard">
-              <CardHeader title={posts[i].title} subheader={"作者: "+posts[i].author}/>
-              <CardContent className="Content">{posts[i].content}</CardContent>
+              <CardHeader title={post.title} subheader={"作者: "+post.author}/>
+              <CardContent className="Content">{post.content}</CardContent>
               <CardActions className="PostCardActions">
-                <Button data-index={i} onClick={async (e) => {
-                    debugger
-                    let i = e.target.parentElement.dataset.index;
+                <Button onClick={() => {
                     posts[i].thumbingUp = true;
-                    this.setState(posts: posts);
+                    that.setState(posts: posts);
                 }}>打赏 P2B</Button>
               </CardActions>
             </Card>
 
-            <Fade in={posts[i].thumbingUp}>
+            <Fade in={post.thumbingUp}>
             <Card className="ThumbUp">
-              <CardHeader title="打赏 P2B" subheader={"作者: "+posts[i].author}/>
+              <CardHeader title="打赏 P2B" subheader={"作者: "+post.author}/>
               <div>
               <TextField className="input" style={{width:'2em'}} data-index={i} onChange={e => {
-                  let i = e.target.parentElement.parentElement.dataset.index;
                   posts[i].value = e.target.value;
-                  this.setState({posts: posts});
+                  that.setState({posts: posts});
               }}/>
                   P2B
               </div>
               <CardActions className="ThumbUpActions">
                 <Button data-index={i} onClick={async (e) => {
-                  let i = e.target.parentElement.dataset.index;
-
-                  if (posts[i].authorRaw && posts[i].value > 0){
+                  if (post.authorRaw && post.value > 0){
                     try {
-                        await this.p2b.to(posts[i].authorRaw, posts[i].value);
-                        alert("你已经成功打赏了 " + posts[i].value + " 个 P2B 给 " + posts[i].authorRaw);
+                        await that.p2b.to(post.authorRaw, post.value);
+                        alert("你已经成功打赏了 " + post.value + " 个 P2B 给 " + post.authorRaw);
                     } catch(err) {
                         alert(err);
                     }
@@ -117,11 +112,11 @@ class App extends Component {
             </Card>
             </Fade>
           </div>
-        );
-    }
+          )
+      });
     return (
       <div className="container">
-        <div className="Row" key={i}>
+        <div className="Row">
           <Card className="NewPost">
           <CardHeader title="新的卡片"/>
           <TextField className="input" placeholder="标题" fullWidth onChange={e => this.setState({title:e.target.value})}/>
