@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import Web3 from "web3";
 import './App.css';
+import P2B from './p2b'
 import P2DO from './p2do'
 import P2NS from './p2ns'
-import Card, { CardHeader, CardContent } from 'material-ui/Card';
+import Card, { CardHeader, CardContent, CardActions } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
+import Fade from 'material-ui/transitions/Fade';
 
 const web3 = global.web3 && new Web3(global.web3.currentProvider);
 
@@ -13,13 +15,14 @@ class App extends Component {
   constructor() {
     super()
     let posts = []
-    this.state = { posts: posts }
+    this.state = { posts: posts , thumbingUp: false}
   }
 
   async componentDidMount() {
     if (!web3) {
       return;
     }
+    this.p2b = new P2B(web3);
     this.p2do = new P2DO(web3);
     this.p2ns = new P2NS(web3);
     let postNum = await this.p2do.getPostNum();
@@ -67,13 +70,52 @@ class App extends Component {
   render() {
     var postCards = [];
     let posts = this.state.posts;
-    for (var i = 0; i < posts.length; i++) {
+    let i;
+    for (i = 0; i < posts.length; i++) {
         postCards.push(
-          <div className="Row" key={i}>
-            <Card className="Post">
-              <CardHeader title={posts[i].title} subheader={"Author: "+posts[i].author}/>
+          <div className="Post" key={i}>
+            <Card className="PostCard">
+              <CardHeader title={posts[i].title} subheader={"作者: "+posts[i].author}/>
               <CardContent className="Content">{posts[i].content}</CardContent>
+              <CardActions className="PostCardActions">
+                <Button data-index={i} onClick={async (e) => {
+                    debugger
+                    let i = e.target.parentElement.dataset.index;
+                    posts[i].thumbingUp = true;
+                    this.setState(posts: posts);
+                }}>打赏 P2B</Button>
+              </CardActions>
             </Card>
+
+            <Fade in={posts[i].thumbingUp}>
+            <Card className="ThumbUp">
+              <CardHeader title="打赏 P2B" subheader={"作者: "+posts[i].author}/>
+              <div>
+              <TextField className="input" style={{width:'2em'}} data-index={i} onChange={e => {
+                  let i = e.target.parentElement.parentElement.dataset.index;
+                  posts[i].value = e.target.value;
+                  this.setState({posts: posts});
+              }}/>
+                  P2B
+              </div>
+              <CardActions className="ThumbUpActions">
+                <Button data-index={i} onClick={async (e) => {
+                  let i = e.target.parentElement.dataset.index;
+
+                  if (posts[i].authorRaw && posts[i].value > 0){
+                    try {
+                        await this.p2b.to(posts[i].authorRaw, posts[i].value);
+                        alert("你已经成功打赏了 " + posts[i].value + " 个 P2B 给 " + posts[i].authorRaw);
+                    } catch(err) {
+                        alert(err);
+                    }
+                  } else {
+                    alert("非法输入");
+                  }
+                }}>确认</Button>
+              </CardActions>
+            </Card>
+            </Fade>
           </div>
         );
     }
@@ -81,9 +123,9 @@ class App extends Component {
       <div className="container">
         <div className="Row" key={i}>
           <Card className="NewPost">
-          <CardHeader title="Create A New Card"/>
-          <TextField className="input" placeholder="title" fullWidth onChange={e => this.setState({title:e.target.value})}/>
-          <TextField className="input" placeholder="content" multiline rows={2} rowsMax={4} onChange={e => this.setState({content:e.target.value})} />
+          <CardHeader title="新的卡片"/>
+          <TextField className="input" placeholder="标题" fullWidth onChange={e => this.setState({title:e.target.value})}/>
+          <TextField className="input" placeholder="内容" multiline rows={2} rowsMax={40} onChange={e => this.setState({content:e.target.value})} />
           <Button onClick={async () => {
               try {
                   let {title,content} = this.state
@@ -91,13 +133,13 @@ class App extends Component {
               } catch(err) {
                   alert(err)
               }
-          }}>POST</Button>
+          }}>发布</Button>
           </Card>
         </div>
         {postCards}
+
       </div>
     );
   }
 }
-
 export default App;
