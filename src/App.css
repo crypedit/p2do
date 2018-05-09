@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 500px;
+  min-width: 250px;
 }
 
 .Post {
@@ -24,7 +24,7 @@
   position: absolute;
   top: 0px;
   right: -250px;
-  width: 200px;
+  min-width: 200px;
   text-align: center;
 }
 
