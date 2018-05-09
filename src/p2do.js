@@ -13,16 +13,20 @@ class P2DO {
   }
 
   async p2doContract() {
-    let currentNetwork = this.web3.currentProvider.publicConfigStore._state.networkVersion
     let exist
-    if(currentNetwork === "1") { // mainnet
-      exist = await this.contract.at('0x0')
-    } else if (currentNetwork === "3") {  // ropsten
+    try {
+      let currentNetwork = this.web3.currentProvider.publicConfigStore._state.networkVersion
+      if(currentNetwork === "1") { // mainnet
+        exist = await this.contract.at('0x0')
+      } else if (currentNetwork === "3") {  // ropsten
       exist = await this.contract.at('0x93ed36306fb10B62C259b31bFb0dd0Bb3521f622')
-    } else if (currentNetwork === "4") { // rinkeby
+      } else if (currentNetwork === "4") { // rinkeby
       exist = await this.contract.at('0xf73b6253d84c940875d20cea6f2f3baad14bc6f1')
-    } else {
-      exist = await this.contract.deployed()
+      } else {
+        exist = await this.contract.deployed()
+      }
+    } catch(e) { // ropsten by default
+        exist = await this.contract.at('0x93ed36306fb10B62C259b31bFb0dd0Bb3521f622')
     }
     return exist
   }
